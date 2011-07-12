@@ -22,7 +22,15 @@ unzip -d "$gappstmp" "$gapps"
     mkdir -p "$nightlytmp/$(dirname "$fn")"
     cp -v "$gappstmp/$fn" "$nightlytmp/$fn"
 done
+
+# files in gapps package
+gappsfiles="$(find "$gappstmp/system" -type f|while read f; do basename $f; done|tr '\n' '|'|sed -e 's/\./\\./g;s/|$//')"
 rm -rf "$gappstmp"
+
+# don't backup & restore the files that are contained in the gapps package over an update
+bpttemp="$(tempfile)"
+grep -Ev "$gappsfiles" "$nightlytmp/system/bin/backuptool.sh" > "$bpttemp"
+mv "$bpttemp" "$nightlytmp/system/bin/backuptool.sh"
 
 tmpzip="$(tempfile)"
 (cd "$nightlytmp"; zip -r - .) > "$tmpzip"
