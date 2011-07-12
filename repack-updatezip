@@ -1,0 +1,37 @@
+#!/bin/sh
+
+nightly="$1"
+gapps="$2"
+out="$3"
+
+ANDROID_BUILD_TOP="/home/yath/sgs/cmsrc" # FIXME
+OUT_TARGET_HOST="linux-x86" # FIXME
+set -ex
+
+nightlytmp="$(mktemp -d cmrepack-nightly.XXXXXXXXX)"
+unzip -d "$nightlytmp" "$nightly"
+
+for apk in RomManager FileManager; do
+    rm -vf "$nightlytmp/system/app/${apk}.apk"
+done
+
+gappstmp="$(mktemp -d cmrecpack-gapps.XXXXXXXXX)"
+unzip -d "$gappstmp" "$gapps"
+
+(cd "$gappstmp"; find system -type f) | while read fn; do
+    mkdir -p "$nightlytmp/$(dirname "$fn")"
+    cp -v "$gappstmp/$fn" "$nightlytmp/$fn"
+done
+rm -rf "$gappstmp"
+
+tmpzip="$(tempfile)"
+(cd "$nightlytmp"; zip -r - .) > "$tmpzip"
+rm -rf "$nightlytmp"
+
+SECURITYDIR=$ANDROID_BUILD_TOP/build/target/product/security
+java -Xmx512m \
+    -jar $ANDROID_BUILD_TOP/out/host/$OUT_TARGET_HOST/framework/signapk.jar \
+    -w $SECURITYDIR/testkey.x509.pem $SECURITYDIR/testkey.pk8 \
+    "$tmpzip" "$out"
+
+rm -vf "$tmpzip"
