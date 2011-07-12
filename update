@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+zip="$1"
+p=/sdcard/1updates/ # MUST end in /
+
+adb push "$zip" "$p"
+adb shell "echo --update_package=$p$(basename "$zip") > /cache/recovery/command"
+adb reboot recovery
