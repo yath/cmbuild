@@ -24,7 +24,7 @@ unzip -d "$gappstmp" "$gapps"
 done
 
 # files in gapps package
-gappsfiles="$(find "$gappstmp/system" -type f|while read f; do basename $f; done|grep -v Vending|tr '\n' '|'|sed -e 's/\./\\./g;s/|$//')"
+gappsfiles="$(find "$gappstmp/system" -type f|while read f; do basename $f; done|tr '\n' '|'|sed -e 's/\./\\./g;s/|$//')"
 rm -rf "$gappstmp"
 
 # don't backup & restore the files that are contained in the gapps package over an update
