@@ -2,6 +2,8 @@
 MYDIR="$(dirname "$(readlink -f "$0")")"
 . "$MYDIR/config"
 
+cd "$TOP"
+
 # set up
 export CYANOGEN_NIGHTLY=1
 . "$ANDROID_BUILD_TOP/build/envsetup.sh" || exit 1
