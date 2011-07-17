@@ -1,14 +1,23 @@
 #!/bin/bash
 GAPPS_PATH=/home/yath/sgs/new/lithid-gapps-0523-signed.zip
+DEVICE=galaxysmtd
 
+# set up
 export CYANOGEN_NIGHTLY=1
 . build/envsetup.sh || exit 1
+breakfast $DEVICE || exit 1
 
-find out/target/product/galaxysmtd -name build.prop | xargs rm
-brunch galaxysmtd || exit 1
-pkgname=cm-$(awk -F= '$1 == "ro.build.version.incremental" { print $2 }' out/target/product/galaxysmtd/system/build.prop)
+# build kernel
+kernel/aries/build.sh $DEVICE || exit 1
+
+# build android
+find out/target/product/$DEVICE -name build.prop | xargs rm
+mka bacon || exit 1
+
+# package
+pkgname=cm-$(awk -F= '$1 == "ro.build.version.incremental" { print $2 }' out/target/product/$DEVICE/system/build.prop)
 zipfile="z99local/${pkgname}.zip"
-z99local/repack-updatezip out/target/product/galaxysmtd/update-squished.zip "$GAPPS_PATH" $zipfile || exit 1
+z99local/repack-updatezip out/target/product/$DEVICE/update-squished.zip "$GAPPS_PATH" $zipfile || exit 1
 echo "Successfully built $pkgname"
 [ "$1" = "update" ] && z99local/update "$zipfile"
 exit 0
