@@ -13,7 +13,7 @@ if [ "$1" = "clean" ]; then
         rm -rf "$KERNEL_DIR/build/.ccache"
     fi
     make clean
-    rm -rf "$ANDOIR_BUILD_TOP/out"
+    rm -rf "$ANDROID_BUILD_TOP/out"
 else
     # build kernel
     if [ -n "$KERNEL_DIR" ]; then
