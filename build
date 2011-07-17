@@ -17,7 +17,7 @@ if [ "$1" = "clean" ]; then
 else
     # build kernel
     if [ -n "$KERNEL_DIR" ]; then
-        kernel/aries/build.sh $DEVICE || exit 1
+        "$KERNEL_DIR/build.sh" $DEVICE || exit 1
     fi
     
     # build android
