@@ -2,7 +2,7 @@
 set -e
 
 ts=$(TZ=UTC date +%Y-%m-%d.%H.%M.%S)
-cmd="echo 'backup_rom(\"/sdcard/clockworkmod/backup/$ts\")' >> /cache/recovery/extendedcommand"
+cmd="echo 'backup_rom(\"/sdcard/clockworkmod/backup/$ts\");' >> /cache/recovery/extendedcommand"
 if [ "$1" = "getcmd" ]; then
     echo $cmd
 else
