@@ -1,11 +1,13 @@
 #!/bin/sh
+MYDIR="$(dirname "$(readlink -f "$0")")"
+. "$MYDIR/config"
+
 set -e
 
 zip="$1"
-p=/sdcard/1updates/ # MUST end in /
 
-adb push "$zip" "$p"
+adb push "$zip" "$UPDATE_PATH"
 adb shell "echo -n > /cache/recovery/extendedcommand"
-[ "$1" != "nobackup" ] && adb shell "$(z99local/backup getcmd)"
-adb shell "echo 'install_zip(\"$p$(basename "$zip")\");' >> /cache/recovery/extendedcommand"
+[ "$1" != "nobackup" ] && adb shell "$("$MYDIR/backup" getcmd)"
+adb shell "echo 'install_zip(\"$UPDATE_PATH$(basename "$zip")\");' >> /cache/recovery/extendedcommand"
 adb reboot recovery

@@ -1,0 +1,6 @@
+ANDROID_BUILD_TOP="$MYDIR/.."
+DEVICE=galaxysmtd
+GAPPS_PATH="$MYDIR/lithid-gapps-0523-signed.zip"
+OUT_TARGET_HOST="linux-x86"
+KERNEL_DIR="$ANDROID_BUILD_TOP/kernel/aries"
+UPDATE_PATH=/sdcard/1updates/ # MUST end in /
