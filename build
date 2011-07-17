@@ -4,7 +4,7 @@ MYDIR="$(dirname "$(readlink -f "$0")")"
 
 # set up
 export CYANOGEN_NIGHTLY=1
-. build/envsetup.sh || exit 1
+. "$ANDROID_BUILD_TOP/build/envsetup.sh" || exit 1
 breakfast $DEVICE || exit 1
 
 if [ "$1" = "clean" ]; then
@@ -13,7 +13,7 @@ if [ "$1" = "clean" ]; then
         rm -rf "$KERNEL_DIR/build/.ccache"
     fi
     make clean
-    rm -rf out
+    rm -rf "$ANDOIR_BUILD_TOP/out"
 else
     # build kernel
     if [ -n "$KERNEL_DIR" ]; then
@@ -21,13 +21,13 @@ else
     fi
     
     # build android
-    find out/target/product/$DEVICE -name build.prop | xargs rm
+    find "$ANDROID_BUILD_TOP/out/target/product/$DEVICE" -name build.prop | xargs rm
     mka bacon || exit 1
     
     # package
-    pkgname=cm-$(awk -F= '$1 == "ro.build.version.incremental" { print $2 }' out/target/product/$DEVICE/system/build.prop)
+    pkgname=cm-$(awk -F= '$1 == "ro.build.version.incremental" { print $2 }' "$ANDROID_BUILD_TOP/out/target/product/$DEVICE/system/build.prop")
     zipfile="$MYDIR/${pkgname}.zip"
-    "$MYDIR/repack-updatezip" out/target/product/$DEVICE/update-squished.zip "$GAPPS_PATH" $zipfile || exit 1
+    "$MYDIR/repack-updatezip" "$ANDROID_BUILD_TOP/out/target/product/$DEVICE/update-squished.zip" "$GAPPS_PATH" $zipfile || exit 1
     echo "Successfully built $pkgname"
     [ "$1" = "update" ] && "$MYDIR/update" "$zipfile"
 fi
